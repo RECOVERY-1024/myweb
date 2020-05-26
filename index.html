@@ -2,161 +2,33 @@
 <html>
 	<head>
 		<meta charset="utf-8">
-		<title>吞噬球</title>
-		<style type="text/css">
-			@import url("Setup.css"); /*引入外部CSS文件*/
-		</style>
+		<title>薛定谔的猫er</title>
+		<link href="CSS文件/myStyles.css" rel="stylesheet" type="text/css"/>
+		<script type="text/javascript" src="JS文件/Control.js"></script>
 	</head>
+		
 	<body>
-		<div id="window">
-			<div id="control">
-				<!-- 按钮等控件 -->
-				<button id="start">开始游戏</button>
-				<button id="stop">暂停游戏</button>
-				<button id="continue">继续游戏</button>
-				<button id="rule">游戏规则</button>
-			</div>
-			<div id="gameWindow">
-				<div id="ball"></div>
-			</div>
+		<h1 style="text-align: center;">这里是薛定谔的猫o(〃＾▽＾〃)o</h1>
+		<!-- 状态栏 -->
+		<div class="state">
+			<h3 id="id1">游戏时间:</h3>
+			<h3 id="id2">游戏分数:</h3>
+			<h3 id="id3">游戏等级:</h3>
+			<p id="p1">000</p>
+			<p id="p2">000</p>
+			<p id="p3">初级</p>
 		</div>
-		<script>
-			var ball = document.querySelector("#ball");
-			var gameWindow = document.querySelector("#gameWindow");
-			var but1 = document.querySelector('#start');
-			var but2 = document.querySelector("#stop");
-			var but3 = document.querySelector("#continue");
-			var but4 = document.querySelector("#rule");
-			var move_x = 10; //对象的初始坐标
-			var move_y = 80;
-			var ballSize = 30;
-			//"left","up","right","down"
-			var dir = ""; //定义的方向
-			var flag = false;
-			//计时器
-			var timer = window.setInterval(moveSnake,5);
-			//为按钮注册事件监听
-			but1.addEventListener("click",function(e){  //游戏设置按钮，可进行选择游戏难度
-				var dif = prompt("请选择游戏难度，输入到文本框中！\n容易 简单 困难","容易");
-				//食物数量
-				var num;
-				switch(dif){
-					case "容易":
-						num = 20;
-						
-						break;
-					case "简单":
-						num = 30;
-						break;
-					case "困难":
-						num = 50;
-						break;
-				}
-				//添加食物
-				for (var i = 1;i <= num;i++) {
-					var food = document.createElement("div")
-					food.id = "food";
-					gameWindow.appendChild(food);
-				}
-				var foods = document.querySelectorAll("#food");
-				//遍历
-				for (var i = 0; i < foods.length; i++) {
-					var x = Math.floor(Math.random()*770);     //x 0-770   y 70-570
-					var y = Math.floor((Math.random()*500+70));
-					var dia = Math.floor(Math.random()*70+10); //此处设食物的大小
-					foods[i].style.left = x+"px";
-					foods[i].style.top = y+"px";
-					foods[i].style.width = dia+"px";
-					foods[i].style.height = dia+"px";
-					foods[i].style.backgroundColor = "#8A2BE2";
-				}
-				console.log("容器大小："+foods.length);
-			});
-			//游戏规则按钮
-			but4.addEventListener("click",function(){
-				alert("记住一条，你始终需要吃掉比你小的物体，否则游戏失败！游戏难度会随着时间流逝而变大！请小心")
-			});
-			//为整个页面添加键盘监听
-			document.addEventListener("keydown",function(e){
-				switch(e.keyCode){
-					case 68:
-						//按下d
-						dir = "R";//方向设置为右
-						break;
-					case 65:
-						//按下a键
-						dir = "L";
-						break;
-					case 87:
-						//按下w键；
-						dir = "U";
-						break;
-					case 83:
-						//按下s键；
-						dir = "D";
-						break;
-				}
-			});
-			function moveSnake(){
-				switch(dir){
-					case "R":
-						move_x++;
-						ball.style.left = (move_x)+"px";
-						if(move_x >= 770){
-							move_x = 770;
-						}
-						break;
-					case "L":
-						move_x--;
-						ball.style.left = (move_x)+"px";
-						if(move_x <= 0){
-							move_x = 0;
-						}
-						break;	
-					case "U":
-						flag = true;
-						move_y--;
-						ball.style.top = (move_y)+"px";
-						if(move_y <= 70){
-							move_y = 70;
-						}
-						break;	
-					case "D":
-						zflag = true;
-						move_y++;
-						ball.style.top = (move_y)+"px";
-						if(move_y >= 570){
-							move_y = 570;
-						}
-						break;
-				}
-				var foods = document.querySelectorAll("#food");
-				//碰撞检测 勾股定理 当两圆心距离小于半径之和时，则认为发生碰撞
-				for (var i = 0; i < foods.length; i++) {
-					var foodSize = parseInt(foods[i].style.width);
-					var x1 = parseInt(foods[i].style.left)+foodSize/2;
-					var y1 = parseInt(foods[i].style.top)+foodSize/2;
-					var x2 = move_x+ballSize/2;
-					var y2 = move_y+ballSize/2;
-					if(Math.sqrt(Math.pow(x1-x2,2)+Math.pow(y1-y2,2)) < Math.floor(foodSize/2 + ballSize/2)){
-						if(foodSize > ballSize){    //游戏失败的判断条件 （可扩展）
-							clearInterval(timer);
-							alert("游戏失败！");
-							window.location.reload();//刷新当前页
-						}else if(foodSize < ballSize){
-							ballSize += 5;
-							gameWindow.removeChild(foods[i]); //删除该节点
-							ball.style.width = ballSize+"px";
-							ball.style.height = ballSize+"px";
-							console.log("球变大了！"+foods.length);
-							if(foods.length == 1){ //当食物列表的长度为1的时候则认为空
-								alert("你赢了！o(〃＾▽＾〃)o");
-								window.location.reload(); //刷新当前页
-							}
-						}
-					}
-				}
-			}
-		</script>
+		<!-- 游戏的主窗体 盒子模型 -->
+		<div class="window">
+			<!-- 开始定义角色对象 -->
+			<img src="美术资源/cat_move.gif" alt="gifImg" id="m_cat" />
+			<!-- 背景 -->
+			<img src="美术资源/back.png" alt="" id="back"/>
+			<img src="美术资源/cloud.png" id="cloud" />
+			<!-- 障碍物 -->
+			<img src="美术资源/mouse.png" id="mouse"/>
+			<img src="美术资源/stone.png" id="stone"/>
+			<img src="美术资源/tree.png" id="tree"/>
+		</div>
 	</body>
 </html>
